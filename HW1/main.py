@@ -43,6 +43,7 @@ def connect(Channel):
     IRCSocket.send("USER ROBOT ROBOT bla :ROBOT\r\n")
     msg_recv = recv_irc()
     IRCSocket.send("JOIN " + Channel + "\r\n")
+    IRCSocket.send("PRIVMSG " + Channel+ " :Hello! I am robot.\r\n")
 
 def repeat(msg_recv):
     repeat_start_pos = msg_recv.find("@repeat ") + 8
@@ -90,7 +91,6 @@ def reply(Channel, isInChatRoom = False):
     while True:
         msg_recv = recv_irc()
         if msg_recv.find("@ " + Channel) != -1:
-            IRCSocket.send("PRIVMSG " + Channel+ " :Hello! I am robot.\r\n")
             isInChatRoom = True
         
         if msg_recv.find("You have not registered") != -1:
