@@ -49,9 +49,18 @@ def connect(Channel):
     
     
 
-def reply(Channel):
+
+def reply(Channel, isInChatRoom = False):
     while True:
         msg_recv = recv_irc()
+        if msg_recv.find("@ " + Channel) != -1:
+            isInChatRoom = True
+        if isInChatRoom:
+            input_order = raw_input("Please enter something")
+            if input_order.find("c") != -1:
+                IRCSocket.close()
+                print "close the connect"
+        
         if msg_recv.find("You have not registered") != -1:
             IRCSocket.close()
             break
