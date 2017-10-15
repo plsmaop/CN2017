@@ -52,7 +52,7 @@ def repeat(msg_recv):
 def convert(msg_recv):
     convert_number  = msg_recv[msg_recv.find("@convert ") + 9:]
     try:
-        return hex(int(convert_number))
+        return str(hex(int(convert_number)))
     except ValueError:
         try:
             return str(int(convert_number, 16))
@@ -63,7 +63,10 @@ def isValid(ip_string):
     length = len(ip_string)
     if length == 0 or length > 3 or (length > 1 and ip_string[0:1] == '0'):
         return False
-    ip_number = int(ip_string)
+    try:
+        ip_number = int(ip_string)
+    except:
+        return False
     return ip_number >= 0 and ip_number <= 255
 
 def ip_caculator(ip_string, segment_number, valid_ip, ip_list):
@@ -77,14 +80,13 @@ def ip_caculator(ip_string, segment_number, valid_ip, ip_list):
 def ip(msg_recv):
     ip_start_pos = msg_recv.find("@ip ") + 4
     ip_string =  msg_recv[ip_start_pos:]
+    print ip_string
     if len(ip_string) < 4:
-        print 0
         return
     ip_list = []
     ip_caculator(ip_string, 4, '', ip_list)
     return ip_list
 
-    
 def reply(Channel, isInChatRoom = False):
     while True:
         msg_recv = recv_irc()
@@ -100,7 +102,7 @@ def reply(Channel, isInChatRoom = False):
             IRCSocket.send("PRIVMSG " + Channel+ " " + convert(msg_recv) + "\r\n")
         elif msg_recv.find("@ip ") != -1:
             ip_list = ip(msg_recv)
-            IRCSocket.send("PRIVMSG " + Channel+ " " + len(ip_list) + "\r\n")
+            IRCSocket.send("PRIVMSG " + Channel+ " " + str(len(ip_list)) + "\r\n")
             for i in ip_list:
                 IRCSocket.send("PRIVMSG " + Channel+ " " + i + "\r\n")
         elif msg_recv.find("@help") != -1:
