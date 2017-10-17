@@ -102,9 +102,15 @@ def reply(Channel, isInChatRoom = False):
             IRCSocket.send("PRIVMSG " + Channel+ " " + convert(msg_recv) + "\r\n")
         elif msg_recv.find("@ip ") != -1:
             ip_list = ip(msg_recv)
-            IRCSocket.send("PRIVMSG " + Channel+ " " + str(len(ip_list)) + "\r\n")
-            for i in ip_list:
-                IRCSocket.send("PRIVMSG " + Channel+ " " + i + "\r\n")
+            ip_len = ''
+            try:
+                ip_len = str(len(ip_list))
+            except:
+                ip_len = '0'
+            IRCSocket.send("PRIVMSG " + Channel+ " " + ip_len + "\r\n")
+            if not ip_len == '0':
+                for i in ip_list:
+                    IRCSocket.send("PRIVMSG " + Channel+ " " + i + "\r\n")
         elif msg_recv.find("@help") != -1:
             IRCSocket.send("PRIVMSG " + Channel+ " :@repeat <Message>\r\n")
             IRCSocket.send("PRIVMSG " + Channel+ " :@convert <Number>\r\n")
