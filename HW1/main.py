@@ -1,8 +1,6 @@
 import socket
-import os
-import string
 
-BOTName = "ROBOT"
+BOTName = "DEss232"
 IRCSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def pong(server_msg):
@@ -45,9 +43,14 @@ def connect(Channel):
     IRCSocket.send("JOIN " + Channel + "\r\n")
     IRCSocket.send("PRIVMSG " + Channel+ " :Hello! I am robot.\r\n")
 
+#def reapt_all(msg_recv, repeat_start_pos):
+    
+
 def repeat(msg_recv):
-    repeat_start_pos = msg_recv.find("@repeat ") + 8
-    return msg_recv[repeat_start_pos:]
+    #print msg_recv
+    repeat_pos = msg_recv.find("@repeat ") + 8
+    return msg_recv[repeat_pos:]
+    #return msg_recv[repeat_pos:len(msg_recv) - 1]
     
 def convert(msg_recv):
     convert_number  = msg_recv[msg_recv.find("@convert ") + 9:]
@@ -61,11 +64,12 @@ def convert(msg_recv):
 
 def isValid(ip_string):
     length = len(ip_string)
-    if length == 0 or length > 3 or (length > 1 and ip_string[0:1] == '0'):
+    if length == 0 or length > 3 or (length > 1 and ip_string[0] == '0'):
         return False
     try:
         ip_number = int(ip_string)
     except:
+        print ip_string
         return False
     return ip_number >= 0 and ip_number <= 255
 
@@ -81,7 +85,7 @@ def ip(msg_recv):
     ip_start_pos = msg_recv.find("@ip ") + 4
     ip_string =  msg_recv[ip_start_pos:]
     print ip_string
-    if len(ip_string) < 4:
+    if len(ip_string) < 4 or len(ip_string) > 12:
         return
     ip_list = []
     ip_caculator(ip_string, 4, '', ip_list)
@@ -97,9 +101,9 @@ def reply(Channel, isInChatRoom = False):
             IRCSocket.close()
             break
         elif msg_recv.find("@repeat ") != -1:
-            IRCSocket.send("PRIVMSG " + Channel+ " " + repeat(msg_recv) +"\r\n")
+            IRCSocket.send("PRIVMSG " + Channel+ " :" + repeat(msg_recv) +"\r\n")
         elif msg_recv.find("@convert ") != -1:
-            IRCSocket.send("PRIVMSG " + Channel+ " " + convert(msg_recv) + "\r\n")
+            IRCSocket.send("PRIVMSG " + Channel+ " :" + convert(msg_recv) + "\r\n")
         elif msg_recv.find("@ip ") != -1:
             ip_list = ip(msg_recv)
             ip_len = ''
@@ -107,10 +111,10 @@ def reply(Channel, isInChatRoom = False):
                 ip_len = str(len(ip_list))
             except:
                 ip_len = '0'
-            IRCSocket.send("PRIVMSG " + Channel+ " " + ip_len + "\r\n")
+            IRCSocket.send("PRIVMSG " + Channel+ " :" + ip_len + "\r\n")
             if not ip_len == '0':
                 for i in ip_list:
-                    IRCSocket.send("PRIVMSG " + Channel+ " " + i + "\r\n")
+                    IRCSocket.send("PRIVMSG " + Channel+ " :" + i + "\r\n")
         elif msg_recv.find("@help") != -1:
             IRCSocket.send("PRIVMSG " + Channel+ " :@repeat <Message>\r\n")
             IRCSocket.send("PRIVMSG " + Channel+ " :@convert <Number>\r\n")
